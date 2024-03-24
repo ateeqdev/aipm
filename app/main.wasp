@@ -97,6 +97,7 @@ entity User {=psl
   contactFormMessages       ContactFormMessage[]     
   tasks                     Task[]
   files                     File[]
+  memberOfProjects          TeamMember[]
 psl=}
 
 entity GptResponse {=psl
@@ -169,6 +170,27 @@ entity Logs {=psl
   createdAt                DateTime        @default(now())
   message                  String
   level                    String
+psl=}
+
+entity Project {=psl
+  id               Int            @id @default(autoincrement())
+  name             String
+  description      String?
+  startDate        DateTime
+  endDate          DateTime
+  teamMembers      TeamMember[]
+  status           String         // Enum: ["In Progress", "Completed", "On Hold"]
+  urgencyScore     Int
+psl=}
+
+entity TeamMember {=psl
+  id               Int            @id @default(autoincrement())
+  user             User           @relation(fields: [userId], references: [id])
+  userId           Int
+  isManager        Boolean        @default(false)
+  project          Project        @relation(fields: [projectId], references: [id])
+  projectId        Int
+  role             String         // Enum: ["Architect", "Web Frontend Developer", "Web Backend Developer", "Mobile Frontend Developer", "Figma Designer", "HTML Designer", ...]
 psl=}
 
 /* 📡 These are the Wasp Routes (You can protect them easily w/ 'authRequired: true');
